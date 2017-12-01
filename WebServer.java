@@ -1,4 +1,4 @@
-//Author Mano Toor
+//Author Mano Toor & Eric Kannampuzha
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -33,6 +33,51 @@ public class WebServer {
 						//get path for file
 						String path = "www" + urlExcludeSpace[1];
 						File fileInPath = new File(path);
+
+						//we found hello.html
+						if(fileInPath.exists()){
+							//Read hello.html display 200 message that its okay
+							BufferedReader fileBufferedReader = new BufferedReader(new FileReader(fileInPath));
+							out.println("HTTP/1.1 200 OK");
+							out.println("Content-type: text/html");
+							out.println("Content-length: " + fileInPath.length());
+							//tell server what was accessed
+							System.out.println("Client accessed \"" + fileInPath + "\".");
+							String readFile = fileBufferedReader.readLine();
+							//Print contents of hello.html
+							while(readFile != null){
+								out.println(readFile + "\n");
+								readFile = fileBufferedReader.readLine();
+							}
+							//close file buffer and print writer
+							fileBufferedReader.close();
+							out.close();
+							//diplay 404 message
+						}else if(!fileInPath.equals("www/hello.html")){
+							File error = new File("www/404.html");
+							//Print 404 error message
+							BufferedReader errorReader = new BufferedReader(new FileReader(error));
+							out.println("HTTP:/1.1 404 Not Found");
+							out.println("Content-type: text/html");
+							out.println("Content-length: " + error.length());
+							
+							//tell java about the error
+							System.out.println("Client tried accessing \"" + fileInPath + "\". Displaying 404 page.");
+							
+							//Print 404 to browser
+							String errorLine = errorReader.readLine();
+							while (errorLine != null) {
+								out.println(errorLine + "\n");
+								errorLine = errorReader.readLine();
+							}
+							// close reader and out
+							errorReader.close();
+							out.close();
+						}else{
+							out.println("500 Error.");
+							System.out.println("Something went wrong.");
+						}
+
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
